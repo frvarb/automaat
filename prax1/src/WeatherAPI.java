@@ -1,9 +1,7 @@
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.time.LocalDate;
@@ -75,6 +73,10 @@ public class WeatherAPI {
         return getJsonObject().getJSONObject("city").getJSONObject("coord").get("lat").toString();
     }
 
+    public String getCityName() {
+        return getJsonObject().getJSONObject("city").get("name").toString();
+    }
+
     public String getLon() {
         return getJsonObject().getJSONObject("city").getJSONObject("coord").get("lon").toString();
     }
@@ -129,5 +131,42 @@ public class WeatherAPI {
         }
     }
 
+    public void askForCity() throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            System.out.println("Enter The City name: ");
+            String city = bufferedReader.readLine();
+            setJsonObject(city);
+        } finally {
+            bufferedReader.close();
+        }
+    }
 
+    public void createFile(String filename, StringBuilder stringBuilder) throws FileNotFoundException, UnsupportedEncodingException {
+        PrintWriter printWriter = new PrintWriter(filename, "UTF-8");
+        printWriter.append(stringBuilder);
+        printWriter.close();
+    }
+
+    public void readFromFile(String filename) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
+        try {
+            String city = bufferedReader.readLine();
+            setJsonObject(city);
+        } finally {
+            bufferedReader.close();
+        }
+    }
+
+    public void readAndWriteAPIToFile() throws IOException {
+        readFromFile("input.txt");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(this.jsonObject.toString());
+        createFile("output.txt", stringBuilder);
+    }
+
+    public JSONObject readJsonObjectFromFile(String filename) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
+        return new JSONObject(bufferedReader.readLine());
+    }
 }
