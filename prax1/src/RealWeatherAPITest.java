@@ -1,10 +1,8 @@
-import org.json.*;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.time.LocalDate;
@@ -131,6 +129,30 @@ public class RealWeatherAPITest {
         LocalDate now = LocalDate.now();
         LocalDate nowPlus3 = LocalDate.of(now.getYear(), now.getMonth(), now.getDayOfMonth() + 3);
         assertEquals(10, this.weatherAPI.highestTemp(nowPlus3), 10);
+    }
+
+    @Test
+    public void testCityDataFromConsoleCorrect() throws IOException {
+        System.setIn(new ByteArrayInputStream("london".getBytes()));
+        this.weatherAPI.askForCity();
+        assertEquals(this.weatherAPI.getCityName().toLowerCase(), "london");
+    }
+
+    @Test
+    public void testCityDataFromConsoleFalse() throws IOException {
+        System.setIn(new ByteArrayInputStream("london".getBytes()));
+        this.weatherAPI.askForCity();
+        assertFalse(this.weatherAPI.getCityName().toLowerCase().equals("tallinn"));
+    }
+
+    @Test
+    public void testFileWriteAndRead() throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Berlin");
+        this.weatherAPI.createFile("input.txt", stringBuilder);
+        this.weatherAPI.readAndWriteAPIToFile();
+        JSONObject outputJsonObject = this.weatherAPI.readJsonObjectFromFile("output.txt");
+        assertEquals(outputJsonObject.getJSONObject("city").get("name").toString(), "Berlin");
     }
 }
 
