@@ -25,8 +25,8 @@ public class MyReader {
         bufferedReader.close();
         PrintWriter writer = new PrintWriter(new FileWriter(filename));
         writer.print("");
-        for (int i = 0; i < lines.size(); i++) {
-            writer.write(lines.get(i) + "\n");
+        for (int linenumber = 0; linenumber < lines.size(); linenumber++) {
+            writer.write(lines.get(linenumber) + "\n");
         }
         writer.close();
         return firstLine;
